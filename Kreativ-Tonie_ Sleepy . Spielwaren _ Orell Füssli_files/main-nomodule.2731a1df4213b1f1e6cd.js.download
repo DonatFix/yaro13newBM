@@ -1,0 +1,341 @@
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "./components/header-warenkorb/main.js":
+/*!*********************************************!*\
+  !*** ./components/header-warenkorb/main.js ***!
+  \*********************************************/
+/*! exports provided: istArtikeldetailseite, istWarenkorbButtonDa, checkWarenkorbButton, sagSentryBescheid, getWarenkorbAnzahl */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "istArtikeldetailseite", function() { return istArtikeldetailseite; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "istWarenkorbButtonDa", function() { return istWarenkorbButtonDa; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "checkWarenkorbButton", function() { return checkWarenkorbButton; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sagSentryBescheid", function() { return sagSentryBescheid; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getWarenkorbAnzahl", function() { return getWarenkorbAnzahl; });
+function _await(value, then, direct) {
+  if (direct) {
+    return then ? then(value) : value;
+  }
+
+  if (!value || !value.then) {
+    value = Promise.resolve(value);
+  }
+
+  return then ? value.then(then) : value;
+}
+
+function _catch(body, recover) {
+  try {
+    var result = body();
+  } catch (e) {
+    return recover(e);
+  }
+
+  if (result && result.then) {
+    return result.then(void 0, recover);
+  }
+
+  return result;
+}
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _empty() {}
+
+function _awaitIgnored(value, direct) {
+  if (!direct) {
+    return value && value.then ? value.then(_empty) : Promise.resolve();
+  }
+}
+
+function _call(body, then, direct) {
+  if (direct) {
+    return then ? then(body()) : body();
+  }
+
+  try {
+    var result = Promise.resolve(body());
+    return then ? result.then(then) : result;
+  } catch (e) {
+    return Promise.reject(e);
+  }
+}
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
+
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var getWarenkorbAnzahl = function getWarenkorbAnzahl() {
+  return _await(_catch(function () {
+    var config = {
+      method: 'GET',
+      cache: 'no-store',
+      headers: {
+        'Accept': 'application/json'
+      },
+      credentials: 'include'
+    };
+    return _await(fetch('/api/warenkorb/size', config), function (response) {
+      return _await(response.json(), function (responseJson) {
+        return _await(responseJson.anzahlArtikel);
+      });
+    });
+  }, function () {
+    return "0";
+  }));
+};
+
+var GlobalHeaderWarenkorb = /*#__PURE__*/function (_HTMLElement) {
+  _inherits(GlobalHeaderWarenkorb, _HTMLElement);
+
+  var _super = _createSuper(GlobalHeaderWarenkorb);
+
+  function GlobalHeaderWarenkorb() {
+    _classCallCheck(this, GlobalHeaderWarenkorb);
+
+    return _super.apply(this, arguments);
+  }
+
+  _createClass(GlobalHeaderWarenkorb, [{
+    key: "connectedCallback",
+    value: function connectedCallback() {
+      try {
+        var _this2 = this;
+
+        _this2.initEventListeners();
+
+        return _awaitIgnored(_this2.updateWarenkorbAnzahl());
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    }
+  }, {
+    key: "initEventListeners",
+    value: function initEventListeners() {
+      var _this3 = this;
+
+      window.addEventListener('warenkorb.update', function () {
+        _this3.updateWarenkorbAnzahl();
+      });
+      window.addEventListener('login.status', function () {
+        _this3.updateWarenkorbAnzahl();
+      });
+    }
+  }, {
+    key: "updateWarenkorbStatus",
+    value: function updateWarenkorbStatus() {
+      var anzahlArtikel = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      this.querySelector('[interaction=link-warenkorb]').setAttribute("count", anzahlArtikel);
+    }
+  }, {
+    key: "updateWarenkorbAnzahl",
+    value: function updateWarenkorbAnzahl() {
+      var _this4 = this;
+
+      return _call(getWarenkorbAnzahl, function (anzahlArtikel) {
+        _this4.updateWarenkorbStatus(anzahlArtikel);
+      });
+    }
+  }]);
+
+  return GlobalHeaderWarenkorb;
+}( /*#__PURE__*/_wrapNativeSuper(HTMLElement));
+
+if (!customElements.get("header-global-warenkorb")) {
+  customElements.define("header-global-warenkorb", GlobalHeaderWarenkorb);
+} // Klick auf "Weiter einkaufen" Link auf der alten Step0-Seite führt zur ADS des ersten Produkt
+
+
+window.addEventListener('click', function (event) {
+  var button = event.target.closest('[component="step0-call-to-action"] a.back');
+
+  if (!button) {
+    return true;
+  }
+
+  var linkElement = document.querySelector('[component="step0-hinzugefügte-produkte"] a');
+
+  if (!linkElement) {
+    return true;
+  }
+
+  event.preventDefault();
+  document.location = linkElement.getAttribute('href');
+});
+
+
+function checkWarenkorbButton() {
+  var istAds = istArtikeldetailseite();
+
+  if (istAds) {
+    var istWkButtonDa = istWarenkorbButtonDa();
+
+    if (istWkButtonDa === false) {
+      sagSentryBescheid();
+    }
+  }
+
+  return false;
+}
+
+function istArtikeldetailseite() {
+  var artikelSidebar = document.querySelector('.artikel-sidebar');
+
+  if (artikelSidebar) {
+    return true;
+  }
+
+  return false;
+}
+
+function istWarenkorbButtonDa() {
+  var warenkorbButton = document.querySelector('warenkorb-button .warenkorb-button, abo-preisbox');
+
+  if (warenkorbButton) {
+    return true;
+  }
+
+  return false;
+}
+
+function sagSentryBescheid() {
+  var message = "Warenkorb-Button ist nicht auf ADS";
+  var event = new CustomEvent("log-error", {
+    bubbles: true,
+    detail: {
+      message: message
+    }
+  });
+  document.dispatchEvent(event);
+}
+
+window.addEventListener("DOMContentLoaded", function () {
+  checkWarenkorbButton();
+});
+
+/***/ }),
+
+/***/ 0:
+/*!***************************************************!*\
+  !*** multi ./components/header-warenkorb/main.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! /builds/team-pac/thalia_ecp_warenkorb/frontend/components/header-warenkorb/main.js */"./components/header-warenkorb/main.js");
+
+
+/***/ })
+
+/******/ });
+//# sourceMappingURL=main-nomodule.2731a1df4213b1f1e6cd.js.map

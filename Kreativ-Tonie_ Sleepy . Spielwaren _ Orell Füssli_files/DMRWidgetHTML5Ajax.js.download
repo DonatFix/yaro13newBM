@@ -1,0 +1,1119 @@
+/**
+ * Created with JetBrains WebStorm.
+ * User: ben26
+ * Date: 14.10.13
+ * Time: 10:15
+ */
+
+// Browser capabilities
+var isAndroid = (/android/gi).test(navigator.appVersion);
+var isIDevice = (/iphone|ipad|ipod/gi).test(navigator.appVersion);
+var isTouchPad = (/hp-tablet/gi).test(navigator.appVersion);
+var isMobileDevice = isAndroid || isIDevice || isTouchPad;
+
+function isMP4() {
+    "use strict";
+    var elem = document.createElement('video');
+    var	bool = false;
+    try {
+        if (bool = !!elem.canPlayType) {
+            bool = new Boolean(bool);
+            bool.h264 = elem.canPlayType('video/mp4; codecs="avc1.42E01E"').replace(/^no$/,'');
+        }
+    } catch(e) { }
+    return bool;
+}
+
+function isMP3() {
+    "use strict";
+    var elem = document.createElement('audio');
+    var	bool = false;
+    try {
+        if (bool = !!elem.canPlayType) {
+            bool = new Boolean(bool);
+            bool.mp3  = elem.canPlayType('audio/mpeg;').replace(/^no$/,'');
+        }
+    } catch(e) { }
+    return bool;
+}
+
+function isCanvas() {
+    "use strict";
+    var elem = document.createElement('canvas');
+    return !!(elem.getContext && elem.getContext('2d'));
+}
+
+function isIE9() {
+    "use strict";
+    var agent = navigator.userAgent.toLowerCase();
+    if (agent.indexOf('MSIE 9'.toLowerCase())>-1) {
+        return true;
+    }
+    return false;
+}
+
+
+//alert(isCanvas() + ' : ' + isMP3() + ' : ' + isMP4() + ' : ' + isIE9() + ' ----> ' + navigator.userAgent.toLowerCase());
+var isHtml5Compatible = isCanvas() && isMP3() && isMP4() && !isIE9();
+
+var DMRWidgetHTML5Ajax = (function () {
+    "use strict";
+    function DMRWidgetHTML5Ajax(layerId, isbn, params) {
+
+        console.log('---> DMRWidgetHTML5Ajax(' + layerId + ', ' + isbn + ', ' + params + ')');
+
+        var xmlHttpRequest = new XMLHttpRequest();
+        var parametersString = '';
+
+        var parameter_layout;
+        var parameter_layoutPopUp;
+        var parameter_showTitle;
+        var parameter_showTitleInPopUp;
+        var parameter_showTooltip;
+        var parameter_showFullScreenButton;
+        var parameter_showMenu;
+        var parameter_clickTeaser;
+        var parameter_arrowTeaser;
+        var parameter_arrowTeaserDown;
+        var parameter_arrowTeaserRight;
+        var parameter_width;
+        var parameter_height;
+        var parameter_bgcolor;
+        var parameter_bgcolorArrowTeaser;
+        var parameter_widthPopUp;
+        var parameter_heightPopUp;
+        var parameter_kiosk;
+        var parameter_isbn;
+        var parameter_lang;
+        var parameter_buyButton;
+        var parameter_showLanguageButton;
+        var parameter_bookmarks;
+        var parameter_feed;
+        var parameter_tellafriend;
+        var parameter_links;
+        var parameter_download;
+        var parameter_book;
+        var parameter_ebook;
+        var parameter_audio;
+        var parameter_video;
+        var parameter_addon;
+        var parameter_search;
+        var parameter_metadata;
+        var parameter_https;
+        var parameter_showTAFButton;
+        var parameter_buttonOrder;
+        var parameter_socialSelfBackLink;
+        var parameter_buyUrl;
+        var parameter_buyUrlBook;
+        var parameter_buyUrlEbook;
+        var parameter_buyUrlAudio;
+        var parameter_buyUrlVideo;
+        var parameter_buyUrlAddon;
+        var parameter_buyButtonTarget;
+        var parameter_startingPag;
+
+        var parameter_wsUrl;
+        var parameter_optimizeSize;
+        var parameter_iconType;
+        var parameter_iconTypeSecondary;
+        var parameter_iconSize;
+        var parameter_uiTheme;
+        var parameter_background;
+        var parameter_prefixEPub;
+        var parameter_widgetUrl;
+        var parameter_fullscreen;
+        var parameter_maxReaderWidth;
+        var parameter_showSearchButton;
+        var parameter_flipBook;
+        var parameter_jump2;
+        var parameter_ePubScrolling;
+        var parameter_applicationType;
+        var parameter_resizable;
+        var parameter_borderWidth;
+        var parameter_borderColor;
+        var parameter_openFSIPN;
+        var parameter_openIPN;
+        var parameter_debug;
+        var parameter_debugMobile;
+
+        var parameter_showExtraSearchButton;
+        var parameter_showExtraShopButton;
+        var parameter_showExtraFacebookButton;
+        var parameter_showExtraFullScreenButton;
+        var parameter_navigationType;
+        var parameter_tabMode;
+
+        var parameter_autoFlip;
+        var parameter_navigationContext;
+        var parameter_playAudioOnStart;
+        var parameter_noNavi;
+        var parameter_noMobilePreCover;
+
+        var parameter_utm_source;
+        var parameter_utm_medium;
+        var parameter_utm_campaign;
+        var parameter_utm_term;
+        var parameter_utm_content;
+
+        var parameter_showExtraDownloadButton;
+
+        var DMRError;
+
+        var protocoll = 'http://';
+
+        if (params == null || typeof params == 'undefined') {
+            params = '';
+        }
+
+        var parameters = [];
+        if (params != '') {
+            parameters = params.split(',');
+        }
+        parameters.push('isbn=' + isbn);
+
+        for (var parameter in parameters) {
+            var parameterParts = parameters[parameter].split('=');
+            var parameterKey = parameterParts[0];
+            var parameterValue = parameterParts[1];
+            try {
+                if (parameterKey != 'fullscreen') {
+                    if (parameterKey.indexOf('Url') > 0) {
+                        if (parameterParts.length > 2) {
+                            for(var i = 2; i < parameterParts.length; i++) {
+                                parameterValue += '=' + parameterParts[i];
+                            }
+                        }
+                        eval('parameter_' + parameterKey + '="' + encodeURIComponent(parameterValue) + '"');
+                    } else {
+                        eval('parameter_' + parameterKey + '="' + parameterValue + '"');
+                    }
+                    console.log('  ---> ' + 'parameter_' + parameterKey + '="' + parameterValue + '"');
+                } else {
+                    console.log(' Filtered  ---> ' + parameters[parameter]);
+                }
+            } catch (e) {
+                console.log(' Rejected  ---> ' + parameters[parameter]);
+            }
+        }
+
+        if (parameter_fullscreen == 'yes') {
+            parameter_width = window.innerWidth();
+        }
+        if (parameter_fullscreen == 'yes') {
+            parameter_height = window.innerHeight();
+        }
+        if (parameter_width == null && parameter_height == null) {
+            if (parameter_layout == 'doublepage') {
+                parameter_width = 400; //390;
+                parameter_height = 315; //312;
+            } else {
+                parameter_width = 200; //195;
+                parameter_height = 315; //312;
+            }
+        } else if (parameter_width == null) {
+            if (parameter_layout == 'doublepage') {
+                parameter_width = Math.ceil((Number(parameter_height) / 3 ) * 4);
+            } else {
+                parameter_width = Math.ceil((Number(parameter_height) / 3 ) * 2);
+            }
+
+        } else if (parameter_height == null) {
+            parameter_height = Math.ceil((Number(parameter_width) / 2) * 3);
+        }
+
+        //parameter_height -= 2;
+        //parameter_width -= 2;
+        if (parameter_https == 'yes') {
+            protocoll = 'https://';
+        }
+
+        if (parameter_bgcolor == null) {
+            parameter_bgcolor = 'E9E8E8';
+        }
+        if (parameter_wsUrl == null) {
+            if (parameter_https == 'yes') {
+                parameter_wsUrl = 'https://www.bic-media.com/dmrs/';
+            } else {
+                parameter_wsUrl = 'http://www.bic-media.com/dmrs/';
+            }
+        }
+
+        if (parameter_borderWidth == null) {
+            parameter_borderWidth = 1;
+        }
+        if (parameter_borderColor == null) {
+            parameter_borderColor = parameter_bgcolor;
+        }
+
+        if (parameter_iconType == null) {
+            parameter_iconType = 'd';
+        }
+
+        if (parameter_lang == null) {
+            parameter_lang = 'de';
+        }
+
+        if (parameter_arrowTeaserDown == null) {
+            parameter_arrowTeaserDown = 0;
+        }
+
+        if (parameter_arrowTeaserRight == null) {
+            parameter_arrowTeaserRight = 0;
+        }
+
+        parametersString = '';
+        for (var parameter in parameters) {
+            try {
+                var parameterParts = parameters[parameter].split('=');
+                if (parameter > 0) {
+                    parametersString += '&';
+                }
+                parametersString += parameterParts[0] + '=' + eval('parameter_' + parameterParts[0]);
+            } catch (e) {
+                //
+            }
+        }
+
+        console.log('---> parametersString: ' + parametersString);
+        console.log('---> layerId: ' + layerId);
+
+        var layer = document.getElementById(layerId);
+
+
+
+        var layerHeight  = layer.clientHeight;
+        var layerWidth = layer.clientWidth;
+        if(layerHeight < 500) {
+            layerHeight = 500
+        }
+        if(layerWidth < 500) {
+            layerWidth = 500
+        }
+        console.log("Client layerHeight:" + layerHeight + " / layerWidth:" + layerWidth);
+
+
+
+        var frameId = 'iframe_' + parameter_isbn + '_' + document.getElementsByTagName('iframe').length;
+
+        if (!isHtml5Compatible) {
+            // flash widget
+            new DMRWidget(isbn, params);
+
+        } else {
+            var htmlString = '';
+            htmlString += '<iframe style="border-spacing: 0;margin: 0;border-style: none;padding: 0;" scrolling="no" border="0" frameborder="0" id="' + frameId + '" src="about:blank" width=' + layerWidth + ' height=' + layerHeight + ' allowFullScreen seamless></iframe>';
+
+            layer.innerHTML = htmlString;
+
+            document.getElementById(frameId).src = protocoll + 'www.bic-media.com/mobile/mobileWidget-jqm1.4.html?' + parametersString;   // /dmrn/
+
+        }
+    }
+
+    return DMRWidgetHTML5Ajax;
+})();
+
+/********************************** Version 5.3 Build 58 ********************************/
+/********************************** Copyright arvato systems 2008-2010*******************/
+/********************************** Part of BIc Media www.bic-media.com******************/
+
+/********************************** a few constants *************************************/
+//Anpassung f�r Deployment
+var DEFAULT_URL = "http://www.bic-media.com/dmrs/";
+
+var dev = false; //Entwicklung der Sprachvariable, kann nach Life Testphase rausgenommen werden.
+
+var DMRParams;
+
+var DEFAULT_CONFIG_URL = DEFAULT_URL + "widget/"; //Configurationsdateien.
+var DEFAULT_SWF_URL =  DEFAULT_URL + "widget/"; // Parameter der Location des zu testenden SWF Films.
+var DEFAULT_FILENAME = "DMRWidget.swf";
+var DEFAULT_COVER_URL = DEFAULT_URL + "cover.do?isbn=";
+var DEFAULT_WIDGET_URL = DEFAULT_URL + "widget.do?";
+var DEFAULT_WIDTH = 200;
+var DEFAULT_HEIGHT = 375;
+var DEFAULT_WIDTH_DOUBLEPAGE = 300;
+var DEFAULT_HEIGHT_DOUBLEPAGE = 325;
+var DEFAULT_HTML5_WIDGET_URL = "http://www.bic-media.com/dmrn/widget/ipadWidget.php"
+
+//we need to store the params in a global hashmap with the isbn as key to be able to have more than one widget on a page
+if (typeof DMRParams == 'undefined') {
+    DMRParams = new Array();
+}
+
+/********************************** callback method stubs - implement as needed *************************************/
+function openDMRWidget(identifier, author, title) {
+}
+function closeDMRWidget(identifier, author, title) {
+}
+
+
+/********************************** Mustard Lab's detect flash methods start here *************************************/
+var DMRUserAgent = navigator.userAgent.toLowerCase();
+if ( (DMRUserAgent.indexOf('msie') != -1) && (DMRUserAgent.indexOf('win') != -1) && (DMRUserAgent.indexOf('opera') == -1) ) {
+    document.writeln('<script language="VBscript">');
+    document.writeln('Function detectActiveXControl(activeXControlName)');
+    document.writeln('  on error resume next');
+    document.writeln('  detectActiveXControl = False');
+    document.writeln('  detectActiveXControl = IsObject(CreateObject(activeXControlName))');
+    document.writeln('End Function');
+    document.writeln('</scr' + 'ipt>');
+}
+function getFlashVersion(){
+    var installedVersion = 0;
+    if ( (DMRUserAgent.indexOf('msie') != -1) && (DMRUserAgent.indexOf('win') != -1) && (DMRUserAgent.indexOf('opera') == -1) ) {
+        for (var i=3; i<10; i++){
+            if(detectActiveXControl("ShockwaveFlash.ShockwaveFlash."+i) == true) installedVersion = i;
+        }
+    } else {
+        if (navigator.plugins["Shockwave Flash"]) {
+            var pluginDesc = navigator.plugins["Shockwave Flash"].description;
+            // 16 is the length of the String "Shockwave Flash "; beginnig from there we search for the dot
+            installedVersion = parseInt( pluginDesc.substr (16 , ( pluginDesc.indexOf (".", 16) - 16) ) );
+        }
+        if(DMRUserAgent.indexOf("webtv") != -1) installedVersion = 3;
+    }
+    return installedVersion;
+}
+
+
+/********************************** DMR Widget *************************************/
+function DMRWidget(isbn, swfArgs) {
+
+    if (swfArgs == null || typeof swfArgs == 'undefined')  swfArgs = '';
+    //we need to store the params in a global hashmap with the isbn as key to be able to have more than one widget on a page
+    DMRParams[isbn] = swfArgs;
+    flashInst = getFlashVersion();
+    if(flashInst >= 8){
+        var myOutput = writeSwf(isbn, false, '', '', '', true);
+        document.write(myOutput);
+    }
+    else {
+        var coverImg = DEFAULT_COVER_URL+isbn+"&width=200";
+        document.write('<div id="noflash" style="text-align: center;">');
+
+        if (isiPad) {
+            var link = DEFAULT_HTML5_WIDGET_URL + '?isbn=' + isbn + '&' + getSwfParams([], isbn);
+            document.write("<a href='" + link + "' target='_blank'><img src='"+coverImg+"' /></a><br/><br/>");
+            document.write("<a href='" + link + "' target='_blank'>Zur iPad-Leseprobe</a>");
+
+        }
+        else {
+            document.write("<img src='"+coverImg+"' /><br/><br/>");
+            document.write("To browse and search this book, <br/>please upgrade to the latest version <br/>of the free <a href='http://www.adobe.com/go/getflashplayer' target='_blank'>Adobe Flash Player</a>.");
+        }
+
+        document.write("</div>");
+    }
+}
+
+function writeSwf (isbn,large,searchStr,matchesStr,jumpTo, useTransparentWMode)
+{
+    var myIsbn = isbn;
+    var isLarge = large;
+
+    if (isParam('https', isbn)) { //if the https parameter was set - rewrite the urls to https
+        DEFAULT_CONFIG_URL = replaceStr(DEFAULT_CONFIG_URL, "http://", "https://");
+        DEFAULT_COVER_URL = replaceStr(DEFAULT_COVER_URL, "http://", "https://");
+        DEFAULT_SWF_URL = replaceStr(DEFAULT_SWF_URL, "http://", "https://");
+    }
+
+    // overwrite PROT with used protocol
+    var PROT = window.location.protocol;
+
+    var w = getParam('width', isbn);
+    var h = getParam('height', isbn);
+    var sUrl = getParam('serviceUrl', isbn);
+    var cUrl = getParam('configUrl', isbn);
+
+    var sPage = '';
+    var mySearchStr = '';
+    var myMatchesStr = '';
+    var myJumpTo = '';
+
+    if (isLarge == true){
+        sPage = largeStartingPage;
+        mySearchStr = searchStr;
+        myMatchesStr = matchesStr;
+        myJumpTo = jumpTo;
+    } else{
+        sPage = getParam('startingPage', isbn);
+    }
+    var width = checkWidth(w, myIsbn);
+    var height = checkHeight(h, myIsbn);
+    //var serviceUrl = checkServiceUrl(sUrl);
+    var configUrl = checkConfigUrl(cUrl);
+    var startingPage = checkStartingPage(sPage);
+    var myPageHost = document.location.hostname;
+    var myLocalHost = window.location.protocol;
+    if (isEmptyOrUndefined(myPageHost)) {myPageHost='local';}
+    if (isEmptyOrUndefined(myLocalHost)) {myLocalHost='';}
+
+    //must
+    var must = [];
+    //I have to add the prefix DMR to be able to differentiate my properties of this object from the ones assigned to Object.prototype
+    must['DMRisbn'] = isbn;
+    must['DMRwidth'] = width;
+    must['DMRheight'] = height;
+    must['DMRpageHost'] = myPageHost;
+    must['DMRLocalHost'] = myLocalHost;
+    if(!isEmptyOrUndefined(myJumpTo)) must['DMRjumpTo'] = myJumpTo;
+    must['DMRconfigUrl'] = configUrl;
+    must['DMRstartingPage'] = startingPage;
+    must['DMRsearchStr'] = mySearchStr;
+    must['DMRmatchesStr'] = myMatchesStr;
+
+    var swfParams = getSwfParams(must, isbn);
+    var swfLocation = DEFAULT_SWF_URL+DEFAULT_FILENAME;
+    var myString = "";
+    scale = "scale";
+    if (isLarge){
+        width = "100%";
+        height = "100%";
+        scale = "exactfit";
+    }
+
+    myString +=("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000'");
+    myString +=("id='DMRWidget' width='"+width+"' height='"+height+"' align='left' ");
+    myString +=("codebase='"+PROT+"//www.adobe.com/go/getflashplayer'>");
+    myString +=("<param name='movie' value='"+swfLocation+"' />");
+    myString +=("<param name='quality' value='high' />");
+    myString +=("<param name='FlashVars' value='"+swfParams+" '/>");
+    myString +=("<param name='allowScriptAccess' value='always' />");
+    myString +=("<param name='allowFullScreen' value='true' />");
+    if (useTransparentWMode) myString +=("<param name='wmode' value='transparent' />");
+    myString +=("<param name='scale' value='"+scale+"' />");
+    myString +=("<param name='salign' value='lt' />");
+    myString +=("<embed src='"+swfLocation+"?quality=high' bgcolor='#ffffff'");
+    myString +=("width='"+width+"' height='"+height+"' name='DMRWidget' align='left' ");
+    myString +=("play='true' ");
+    myString +=("loop='false' ");
+    myString +=("quality='high' ");
+    myString +=("scale='"+scale+"'");
+    myString +=("FlashVars='"+swfParams+"'");
+    myString +=("salign='lt' ");
+    myString +=("allowScriptAccess='always' ");
+    if (useTransparentWMode) myString +=("wmode='transparent' ");
+    myString +=("allowFullScreen='true' ");
+    myString +=("type='application/x-shockwave-flash' ");
+
+    // @START	[BB@PAD]	patch 1
+    //Patch wegen DMR 2260
+    myString += ("pluginspage='"+PROT+"//www.adobe.com/go/getflashplayer'");
+    if (
+        (navigator.userAgent.toLowerCase().indexOf('webkit') > -1)
+    ) {
+        myString += (" /> ");
+    } else {
+        myString += (" ></embed> ");
+    }
+    // @END		[BB@PAD]	patch 1
+
+    myString += ("</object>");
+    return myString;
+}
+
+/* Chrome-specific pop-up variant that may be the better pop-up solution also for other browsers */
+function chromePopup(swf, varString, isLanguage,isbn) {
+    var beginIdxString = "name='FlashVars' value='";
+    var endIdxString = "'/>";
+    var beginIdx = swf.indexOf(beginIdxString);
+    var endIdx = swf.indexOf(endIdxString);
+    var flashVars = swf.substring(beginIdx + 24, endIdx);
+
+    if (isParam('https', isbn)) { //if the https parameter was set - rewrite the urls to https
+        DEFAULT_WIDGET_URL = replaceStr(DEFAULT_WIDGET_URL, "http://", "https://");
+    }
+
+    var widgetParamUri = DEFAULT_WIDGET_URL +  flashVars;
+    if (isLanguage) {
+        var WindowID = Math.random();
+        WindowID = String(WindowID).substring(4, 11);
+        var OpenWindow = window.open(widgetParamUri, "window" + WindowID, varString);
+    } else {
+        var OpenWindow = window.open(widgetParamUri, "myDMRWidgetWindow", varString);
+    }
+}
+
+function openWin(startingPage, w, h, author, title, searchStr, matchesStr, isbn, jumpTo, flashvars) {
+    try {
+        flashvars = processFlashvars(flashvars);
+        DMRParams[isbn] = flashvars;
+    } catch (e) {
+    }
+    OpenWinExecute(startingPage, w, h, author, title, searchStr, matchesStr, isbn, jumpTo, false)
+
+}
+
+function processFlashvars(flashvars) {
+    flashvars = flashvars.replace('____', '&');
+    var widgetSource = findParam(flashvars,'widgetSource', ',');
+    flashvars = removeParam(flashvars, 'widgetSource', ',');
+    if (findParam(flashvars,'myAdress', ',') == undefined && widgetSource != undefined) {
+        flashvars += ",myAdress=" + widgetSource;
+    }
+    return flashvars;
+}
+
+//finds parameter from a string with parameters and their values. Result: the value of parameter or "" if no such parameter found
+function findParam(string, paramName, separator){
+    var arg = string.split(separator);
+    var len = arg.length;
+    //iterate over all configured parameters
+    for (a=0;a<len;a++){
+        var idx = arg[a].indexOf('=');
+        if (idx != -1 && arg[a].substring(0, idx) == paramName) {
+            return arg[a].substring(idx + 1, arg[a].length);
+        }
+    }
+    return undefined;
+}
+
+function removeParam(string, paramName, separator){
+    var arg = string.split(separator);
+    var len = arg.length;
+    var result = "";
+    for (a=0;a<len;a++){
+        var idx = arg[a].indexOf('=');
+        if (idx == -1) {
+            idx = arg[a].length;
+        }
+        if (arg[a].substring(0, idx) != paramName) {
+            result += arg[a] ;
+        }
+        if (a < len-2) {
+            result += separator;
+        }
+    }
+    return result;
+}
+
+
+function openWinNewLanguage(startingPage, w, h, author, title, searchStr, matchesStr, isbn, jumpTo, flashvars) {
+    try {
+        flashvars = processFlashvars(flashvars);
+        DMRParams[isbn] = flashvars;
+    } catch (e) {
+    }
+
+    OpenWinExecute(startingPage, w, h, author, title, searchStr, matchesStr, isbn, jumpTo, true);
+    window.close();
+}
+
+
+function OpenWinExecute(startingPage, w, h, author, title, searchStr, matchesStr, isbn, jumpTo, isLanguage) {
+    //F�hrt die �ffnung eines entweder neuen gro�en Fensters, oder erneuert das aktuelle Fenster mit einer anderen Sprache
+    try { openDMRWidget(isbn, author, title); } catch (e) { }
+    largeStartingPage = startingPage;
+
+    //Extention for DMR-644
+    //Function ready for Calls from DMRCarousel Widget
+    if (jumpTo == "bookCarousel") {
+        jumpTo = "book";
+    }
+    var swf = writeSwf(isbn, true, searchStr, matchesStr, jumpTo, false);
+    var myLeft = 0;
+    var myTop = 0;
+    try {
+        myLeft = (screen.availWidth - w) / 2;
+        myTop = (screen.availHeight - h) / 2;
+    } catch (e) { }
+    var varString = "height=" + h + ",width=" + w + ",top=" + myTop + ",left=" + myLeft + ",resizable=1,status=0";
+
+    chromePopup(swf, varString, isLanguage,isbn);
+
+}
+
+
+function openWindow(url, target, myWidth, myHeight) {
+
+    try {var myTop = screen.availHeight/2-myHeight/2; var myLeft = screen.availWidth/2-myWidth/2;} catch(e) {var myTop=0; var myLeft=0;}
+    var theWindow = window.open(url, target, "width=" + myWidth + ",height=" + myHeight + ",top=" + myTop + ",left="+ myLeft + ",status=no,toolbar=no,scrollbars=yes,menubar=no");
+    theWindow.focus();
+}
+
+function checkWidth (width, isbn){
+    var defaultWidth = DEFAULT_WIDTH;
+    if (!isEmptyOrUndefined(isbn) && !isEmptyOrUndefined(getParam('layout', isbn)) && getParam('layout', isbn) == 'doublepage') {
+        defaultWidth = DEFAULT_WIDTH_DOUBLEPAGE;
+    }
+
+    var w = width;
+    if (w == 0 || isNaN(w)) w = defaultWidth;
+    return w;
+}
+
+function checkHeight (height, isbn){
+    var defaultHeight = DEFAULT_HEIGHT;
+    if (!isEmptyOrUndefined(isbn) && !isEmptyOrUndefined(getParam('layout', isbn)) && getParam('layout', isbn) == 'doublepage') {
+        defaultHeight = DEFAULT_HEIGHT_DOUBLEPAGE;
+    }
+
+    var h = height;
+    if (h == 0 || isNaN(h)) h = defaultHeight;
+    return h;
+}
+
+function checkConfigUrl (ConfigUrl){
+    var cU = ConfigUrl;
+    if (!cU) cU = DEFAULT_CONFIG_URL;
+
+    return cU;
+}
+
+function checkStartingPage (startPage){
+    var n = 1;
+    if (isNaN(startPage) || startPage < 1) return n
+    return startPage
+}
+
+function getParam(paramStr, isbn) {
+
+    try {
+        var arg = DMRParams[isbn].split(',');
+        var len = arg.length;
+        var outputVar = "";
+        for (a = 0; a < len; a++) {
+            var par = arg[a].split('=')
+            if (par[0] == paramStr) return par[1];
+        }
+    } catch (e) {
+        return false
+    }
+    return false;
+}
+
+//returns true if the parameter is set to true or yes
+function isParam(paramStr, isbn) {
+    try {
+        return (getParam(paramStr, isbn)=='true' || getParam(paramStr, isbn)=='yes' || getParam(paramStr, isbn)=='True' || getParam(paramStr, isbn)=='Yes')
+    }
+    catch(e) {
+        return false
+    }
+}
+
+function getSwfParams (obj, isbn) {
+    var str = "";
+    var separator = "";
+    var alreadySetParameter = new Array();
+    var myAdress = "" + window.location;
+    //split configured parameters at comma
+
+    try {
+        var arg = DMRParams[isbn].split(',');
+    } catch (e) {
+        arg = "";
+    }
+    var len = arg.length;
+
+    //iterate over all configured parameters
+    for (a=0;a<len;a++){
+        //split name-value pairs
+        var idx = arg[a].indexOf('=');
+        var parameterName = arg[a].substring(0, idx) ;
+        var parameterValue = arg[a].substring(idx + 1, arg[a].length) ;
+        parameterValue.replace('&','____');
+
+        //check if there are default values in the must-Hash; Those will overwrite the configured ones
+        for (var i in obj){
+            //regard only properties of this object flagged with the prefix DMR
+            if (i.length > 3 && i.indexOf("DMR")==0) {
+                i = i.substring(3);
+                if (i==parameterName) {
+                    parameterValue = obj["DMR" + i];
+                }
+            }
+        }
+        if (parameterName != 'myAdress') {
+            alreadySetParameter[parameterName] = true;
+            str += separator + parameterName + "=" + parameterValue;
+            separator = "&";
+        }
+        else {
+            myAdress = parameterValue;
+        }
+    }
+
+    for (var i in obj){
+        //regard only properties of this object flagged with the prefix DMR
+        if (i.length > 3 && i.indexOf("DMR")==0) {
+            i = i.substring(3);
+            if (!alreadySetParameter[i]) {
+                str += separator + i + "=" + obj["DMR" + i];
+                separator = "&";
+            }
+        }
+    }
+
+//	// reproduce old behaviour by adding params of location
+    var location = "" + window.location;
+    var end = (location.lastIndexOf('#') != -1) ? location.lastIndexOf('#') : location.length;
+    var start = (location.indexOf('?') != -1) ? location.indexOf('?') + 1 : end;
+    str += separator + location.substring(start, end);
+    separator = "&";
+
+    //Add own Adress
+    str += separator + "myAdress=" + escape(myAdress) + "&widgetSource=" + escape(myAdress);
+    separator = "&";
+
+
+
+    return str;
+}
+
+/********************************** DMR Carousel *************************************/
+function DMRCarousel(params){
+    if (params == null || typeof params == 'undefined')  params = {};
+    flashInst = getFlashVersion();
+    if(flashInst >= 9){
+        var flashVars = "";
+        for (var param in params) {
+            flashVars=flashVars + param + "=" + params[param] + "&";
+        }
+        AC_FL_RunContent(
+            "src", DEFAULT_SWF_URL + "DMRCarousel",
+            "width", isEmptyOrUndefined(params['width'])?500:params['width'],
+            "height", isEmptyOrUndefined(params['height'])?400:params['height'],
+            "align", "left",
+            "id", "DMRCarouselWidget",
+            "quality", "high",
+            "bgcolor", isEmptyOrUndefined(params['bgcolor'])?"#869ca7":params['bgcolor'],
+            "name", "DMRCarouselWidget",
+            "flashvars", flashVars,
+            "allowScriptAccess","always",
+            "type", "application/x-shockwave-flash",
+            "pluginspage", "http://www.adobe.com/go/getflashplayer"
+        );
+    }else{
+        document.write('<div id="noflash" style="text-align: center;">');
+        document.write("To browse these books, <br/>please upgrade to the latest version <br/>of the free <a href='http://www.adobe.com/go/getflashplayer' target='_blank'>Adobe Flash Player</a>.</div>");
+    }
+}
+
+/********************************** DMR FishEye *************************************/
+function DMRFishEye(params){
+    if (params == null || typeof params == 'undefined')  params = {};
+    flashInst = getFlashVersion();
+    if(flashInst >= 9){
+        var flashVars = "";
+        for (var param in params) {
+            flashVars=flashVars + param + "=" + params[param] + "&";
+        }
+        AC_FL_RunContent(
+            "src", DEFAULT_URL + "widget/DMRFishEyeWidget",
+            "width", isEmptyOrUndefined(params['width'])?650:params['width'],
+            "height", isEmptyOrUndefined(params['height'])?200:params['height'],
+            "align", "left",
+            "id", "DMRFishEyeWidget",
+            "quality", "high",
+            "bgcolor", isEmptyOrUndefined(params['bgcolor'])?"#869ca7":params['bgcolor'],
+            "name", "DMRFishEyeWidget",
+            "flashvars", flashVars,
+            "allowScriptAccess","always",
+            "type", "application/x-shockwave-flash",
+            "pluginspage", "http://www.adobe.com/go/getflashplayer"
+        );
+    }else{
+        document.write('<div id="noflash" style="text-align: center;">');
+        document.write("To browse these books, <br/>please upgrade to the latest version <br/>of the free <a href='http://www.adobe.com/go/getflashplayer' target='_blank'>Adobe Flash Player</a>.</div>");
+    }
+}
+
+
+/********************************** utilities *************************************/
+function replaceStr(str, oldStr, newStr) {
+    regExp = new RegExp(oldStr, "gi");
+    results = str.replace(regExp, newStr);
+    return results;
+}
+
+function isEmptyOrUndefined(item) {
+    if (item == null || typeof item == 'undefined' || item == '' || item == 'undefined') {return true;} else {return false;}
+}
+
+function getDMRCarousel() {
+    var carousel;
+    try {carousel = window.DMRCarouselWidget==null?document.DMRCarouselWidget:window.DMRCarouselWidget;} catch(e) {}
+    return carousel;
+}
+
+
+function getDMRFishEye() {
+    var fishEye;
+    try {fishEye = window.DMRFishEyeWidget==null?document.DMRFishEyeWidget:window.DMRFishEyeWidget;} catch(e) {}
+    return fishEye;
+}
+
+
+
+/********************************** AC_OETags.js *************************************/
+// Flash Player Version Detection - Rev 1.5
+// Detect Client Browser type
+// Copyright(c) 2005-2006 Adobe Macromedia Software, LLC. All rights reserved.
+var isIE  = (navigator.appVersion.indexOf("MSIE") != -1) ? true : false;
+var isWin = (navigator.appVersion.toLowerCase().indexOf("win") != -1) ? true : false;
+var isOpera = (navigator.userAgent.indexOf("Opera") != -1) ? true : false;
+var isiPad = navigator.userAgent.match(/iPad/i) != -1 && navigator.userAgent.match(/Safari/i) != -1;
+
+function ControlVersion()
+{
+    var version;
+    var axo;
+    var e;
+
+    // NOTE : new ActiveXObject(strFoo) throws an exception if strFoo isn't in the registry
+
+    try {
+        // version will be set for 7.X or greater players
+        axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.7");
+        version = axo.GetVariable("$version");
+    } catch (e) {
+    }
+
+    if (!version)
+    {
+        try {
+            // version will be set for 6.X players only
+            axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.6");
+
+            // installed player is some revision of 6.0
+            // GetVariable("$version") crashes for versions 6.0.22 through 6.0.29,
+            // so we have to be careful.
+
+            // default to the first public version
+            version = "WIN 6,0,21,0";
+
+            // throws if AllowScripAccess does not exist (introduced in 6.0r47)
+            axo.AllowScriptAccess = "always";
+
+            // safe to call for 6.0r47 or greater
+            version = axo.GetVariable("$version");
+
+        } catch (e) {
+        }
+    }
+
+    if (!version)
+    {
+        try {
+            // version will be set for 4.X or 5.X player
+            axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.3");
+            version = axo.GetVariable("$version");
+        } catch (e) {
+        }
+    }
+
+    if (!version)
+    {
+        try {
+            // version will be set for 3.X player
+            axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.3");
+            version = "WIN 3,0,18,0";
+        } catch (e) {
+        }
+    }
+
+    if (!version)
+    {
+        try {
+            // version will be set for 2.X player
+            axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash");
+            version = "WIN 2,0,0,11";
+        } catch (e) {
+            version = -1;
+        }
+    }
+
+    return version;
+}
+
+// JavaScript helper required to detect Flash Player PlugIn version information
+function GetSwfVer(){
+    // NS/Opera version >= 3 check for Flash plugin in plugin array
+    var flashVer = -1;
+
+    if (navigator.plugins != null && navigator.plugins.length > 0) {
+        if (navigator.plugins["Shockwave Flash 2.0"] || navigator.plugins["Shockwave Flash"]) {
+            var swVer2 = navigator.plugins["Shockwave Flash 2.0"] ? " 2.0" : "";
+            var flashDescription = navigator.plugins["Shockwave Flash" + swVer2].description;
+            var descArray = flashDescription.split(" ");
+            var tempArrayMajor = descArray[2].split(".");
+            var versionMajor = tempArrayMajor[0];
+            var versionMinor = tempArrayMajor[1];
+            if ( descArray[3] != "" ) {
+                tempArrayMinor = descArray[3].split("r");
+            } else {
+                tempArrayMinor = descArray[4].split("r");
+            }
+            var versionRevision = tempArrayMinor[1] > 0 ? tempArrayMinor[1] : 0;
+            var flashVer = versionMajor + "." + versionMinor + "." + versionRevision;
+        }
+    }
+    // MSN/WebTV 2.6 supports Flash 4
+    else if (navigator.userAgent.toLowerCase().indexOf("webtv/2.6") != -1) flashVer = 4;
+    // WebTV 2.5 supports Flash 3
+    else if (navigator.userAgent.toLowerCase().indexOf("webtv/2.5") != -1) flashVer = 3;
+    // older WebTV supports Flash 2
+    else if (navigator.userAgent.toLowerCase().indexOf("webtv") != -1) flashVer = 2;
+    else if ( isIE && isWin && !isOpera ) {
+        flashVer = ControlVersion();
+    }
+    return flashVer;
+}
+
+// When called with reqMajorVer, reqMinorVer, reqRevision returns true if that version or greater is available
+function DetectFlashVer(reqMajorVer, reqMinorVer, reqRevision)
+{
+    versionStr = GetSwfVer();
+    if (versionStr == -1 ) {
+        return false;
+    } else if (versionStr != 0) {
+        if(isIE && isWin && !isOpera) {
+            // Given "WIN 2,0,0,11"
+            tempArray         = versionStr.split(" "); 	// ["WIN", "2,0,0,11"]
+            tempString        = tempArray[1];			// "2,0,0,11"
+            versionArray      = tempString.split(",");	// ['2', '0', '0', '11']
+        } else {
+            versionArray      = versionStr.split(".");
+        }
+        var versionMajor      = versionArray[0];
+        var versionMinor      = versionArray[1];
+        var versionRevision   = versionArray[2];
+
+        // is the major.revision >= requested major.revision AND the minor version >= requested minor
+        if (versionMajor > parseFloat(reqMajorVer)) {
+            return true;
+        } else if (versionMajor == parseFloat(reqMajorVer)) {
+            if (versionMinor > parseFloat(reqMinorVer))
+                return true;
+            else if (versionMinor == parseFloat(reqMinorVer)) {
+                if (versionRevision >= parseFloat(reqRevision))
+                    return true;
+            }
+        }
+        return false;
+    }
+}
+
+function AC_AddExtension(src, ext)
+{
+    if (src.indexOf('?') != -1)
+        return src.replace(/\?/, ext+'?');
+    else
+        return src + ext;
+}
+
+function AC_Generateobj(objAttrs, params, embedAttrs)
+{
+    var str = '';
+    if (isIE && isWin && !isOpera)
+    {
+        str += '<object ';
+        for (var i in objAttrs)
+            str += i + '="' + objAttrs[i] + '" ';
+        for (var i in params)
+            str += '><param name="' + i + '" value="' + params[i] + '" /> ';
+        str += '></object>';
+    } else {
+        str += '<embed ';
+        for (var i in embedAttrs)
+            str += i + '="' + embedAttrs[i] + '" ';
+        str += '> </embed>';
+    }
+
+    document.write(str);
+}
+
+function AC_FL_RunContent(){
+    var ret =
+        AC_GetArgs
+        (  arguments, ".swf", "movie", "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+            , "application/x-shockwave-flash"
+        );
+    AC_Generateobj(ret.objAttrs, ret.params, ret.embedAttrs);
+}
+
+function AC_GetArgs(args, ext, srcParamName, classid, mimeType){
+    var ret = new Object();
+    ret.embedAttrs = new Object();
+    ret.params = new Object();
+    ret.objAttrs = new Object();
+    for (var i=0; i < args.length; i=i+2){
+        var currArg = args[i].toLowerCase();
+
+        switch (currArg){
+            case "classid":
+                break;
+            case "pluginspage":
+                ret.embedAttrs[args[i]] = args[i+1];
+                break;
+            case "src":
+            case "movie":
+                args[i+1] = AC_AddExtension(args[i+1], ext);
+                ret.embedAttrs["src"] = args[i+1];
+                ret.params[srcParamName] = args[i+1];
+                break;
+            case "onafterupdate":
+            case "onbeforeupdate":
+            case "onblur":
+            case "oncellchange":
+            case "onclick":
+            case "ondblClick":
+            case "ondrag":
+            case "ondragend":
+            case "ondragenter":
+            case "ondragleave":
+            case "ondragover":
+            case "ondrop":
+            case "onfinish":
+            case "onfocus":
+            case "onhelp":
+            case "onmousedown":
+            case "onmouseup":
+            case "onmouseover":
+            case "onmousemove":
+            case "onmouseout":
+            case "onkeypress":
+            case "onkeydown":
+            case "onkeyup":
+            case "onload":
+            case "onlosecapture":
+            case "onpropertychange":
+            case "onreadystatechange":
+            case "onrowsdelete":
+            case "onrowenter":
+            case "onrowexit":
+            case "onrowsinserted":
+            case "onstart":
+            case "onscroll":
+            case "onbeforeeditfocus":
+            case "onactivate":
+            case "onbeforedeactivate":
+            case "ondeactivate":
+            case "type":
+            case "codebase":
+                ret.objAttrs[args[i]] = args[i+1];
+                break;
+            case "id":
+            case "width":
+            case "height":
+            case "align":
+            case "vspace":
+            case "hspace":
+            case "class":
+            case "title":
+            case "accesskey":
+            case "name":
+            case "tabindex":
+                ret.embedAttrs[args[i]] = ret.objAttrs[args[i]] = args[i+1];
+                break;
+            default:
+                ret.embedAttrs[args[i]] = ret.params[args[i]] = args[i+1];
+        }
+    }
+    ret.objAttrs["classid"] = classid;
+    if (mimeType) ret.embedAttrs["type"] = mimeType;
+    return ret;
+}
+
